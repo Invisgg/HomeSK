@@ -1,0 +1,82 @@
+# Homes
+
+command homes [<string>] [<string>]:
+    trigger:
+        if arg-1 is "help":
+            send "&7&m---------------------------"
+            send "&6&lHOMES &7v1.0"
+            send " "
+            send "&eCommands:"
+            send "&aCreate &7/homes create <home name>"
+            send "&aDelete &7/homes delete <home name>"
+            send "&aList &7/homes list"
+            send "&aTeleport &7/homes <home name>"
+            send "&7&m---------------------------"
+        if arg-1 is set:
+            if player doesn't have permission "homes.vip":
+                send "&cYou need a rank to use multiple homes. &epraised.tebex.io!"
+            else:
+                if arg-1 is "create":
+                    if arg-2 isn't set:
+                        send "&CError 404: Require argument not found"
+                    else:
+                        if {homes::%player's uuid%::*} doesn't contain arg-2:
+                            add arg-2 to {homes::%player's uuid%::*}
+                            set {homess::%player's uuid%::%arg-2%.location} to player's location
+                            send "&6&lHOMES &7Created home with name %arg-2%"
+                            stop
+                        else:
+                            send "&cYou already have a home named &7%arg-2%"
+                            stop
+                if arg-1 is "delete":
+                    if arg-2 isn't set:
+                        send "&CError 404: Require argument not found"
+                        stop
+                    else:
+                        if {homes::%player's uuid%::*} doesn't contain arg-2:
+                            send "&cYou don't have a home named &7%arg-2%"
+                            stop
+                        else:
+                            remove arg-2 from {homes::%player's uuid%::*}
+                            send "&6&lHOMES &7Deleted home with name %arg-2%"
+                            delete {homes::%player's uuid%::%arg-2%.location}
+                            stop
+                if arg-1 is "list":
+                    if size of {homes::%player's uuid%::*} is greater than 0:
+                        send "&7&m---------------------------"
+                        send "&6&lHOMES &7v1.0"
+                        send " "
+                        send "&eHomes: &7%{homes::%player's uuid%::*}%"
+                        send "&7&m---------------------------"
+                        stop
+                    else:
+                        send "&CError 404: You have no homes"
+                        stop
+                else:
+                    if {homes::%player's uuid%::*} contains arg-1:
+                        teleport player to {homess::%player's uuid%::%arg-1%.location}
+                        send "&6&lHOMES &7Teleported to your home location"
+                        stop
+                    else:
+                        send "&7&m---------------------------"
+                        send "&6&lHOMES &7v1.0"
+                        send " "
+                        send "&eCommands:"
+                        send "&aCreate &7/homes create <home name>"
+                        send "&aDelete &7/homes delete <home name>"
+                        send "&aList &7/homes list"
+                        send "&aTeleport &7/homes <home name>"
+                        send "&7&m---------------------------"
+
+command sethome:
+    trigger:
+        if player has permission "homes.vip":
+            send "&CUse the command /homes"
+        else:
+            set {homes.%player's uuid%.location} to player's location
+            send "&6&lHOMES &7Set your home location"
+
+command home:
+    trigger:
+        teleport player to {homes.%player's uuid%.location}
+        send "&6&lHOMES &7teleported to your home location"
